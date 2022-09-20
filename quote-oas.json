@@ -1,0 +1,263 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Protect API - Policy",
+    "description": "Endpoints which support CRUD operations necessary for Quoting and creating Guarantees",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/v0_1/quote/guarantee": {
+      "post": {
+        "operationId": "createGuaranteeQuote",
+        "summary": "Create Guarantee Quote",
+        "description": "Create a Guarantee Quote for given location and dates with an existing insurance Product",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGuaranteeQuoteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful guarantee quote created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "CreateGuaranteeQuoteResponse": {
+                    "type": {
+                      "$ref": "#/components/schemas/CreateGuaranteeQuoteResponse"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateGuaranteeQuoteRequest": {
+        "title": "Create Quote Request",
+        "type": "object",
+        "required": [
+          "product_id",
+          "coverage_start_date",
+          "coverage_end_date",
+          "exposure_name",
+          "exposure_latitude",
+          "exposure_longitude",
+          "exposure_total_coverage_amount"
+        ],
+        "properties": {
+          "product_id": {
+            "title": "Product ID",
+            "type": "string",
+            "description": "ID of the insurance guarantee product to use in making a quote",
+            "format": "uuid",
+            "example": "28d0a8c0-9a22-4cc1-875a-c1f63b64d328"
+          },
+          "coverage_start_date": {
+            "title": "Start Date",
+            "type": "string",
+            "description": "The start date for the trip to guarantee",
+            "format": "date",
+            "example": "2022-11-22"
+          },
+          "coverage_end_date": {
+            "title": "End Date",
+            "type": "string",
+            "description": "The end date for the trip to guarantee",
+            "format": "date",
+            "example": "2022-11-24"
+          },
+          "exposure_name": {
+            "title": "Exposure Name",
+            "type": "string",
+            "description": "What to call the exposures being guaranteed",
+            "example": "Sensible Campsite"
+          },
+          "exposure_latitude": {
+            "title": "Latitude",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "type": "number",
+            "description": "The latitude of the location we want to guarantee",
+            "example": 42.15
+          },
+          "exposure_longitude": {
+            "title": "Longitude",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "type": "number",
+            "description": "The longitude of the location we want to guarantee",
+            "example": -74.20
+          },
+          "exposure_total_coverage_amount": {
+            "title": "Total Coverage Amount",
+            "type": "number",
+            "minimum": 1.0,
+            "description": "Total price of all days of the trip being guaranteed"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string",
+            "description": "ISO Currency code to use for this guarantee",
+            "enum": [
+              "USD",
+              "GBP"
+            ],
+            "example": "USD"
+          },
+          "coverage_start_hour_number": {
+            "title": "Coverage Start Hour",
+            "type": "integer",
+            "description": "The hour of day for start of coverage each day",
+            "example": 8,
+            "minimum": 0,
+            "maximum": 23
+          },
+          "coverage_end_hour_number": {
+            "title": "Coverage End Hour",
+            "type": "integer",
+            "description": "The hour of day for end of coverage each day",
+            "example": 22,
+            "minimum": 1,
+            "maximum": 24
+          }
+        }
+      },
+      "CreateGuaranteeQuoteResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "product_id": {
+            "type": "string"
+          },
+          "guarantee_id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "coverage_start_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "coverage_end_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "coverage_start_hour": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "coverage_end_hour": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "wholesale_price": {
+            "type": "number"
+          },
+          "suggested_price": {
+            "type": "number"
+          },
+          "documents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuaranteeDocument"
+            }
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "accepted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "declined_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "exposure_name": {
+            "type": "string"
+          },
+          "exposure_latitude": {
+            "type": "number"
+          },
+          "exposure_longitude": {
+            "type": "number"
+          },
+          "exposure_total_coverage_amount": {
+            "type": "number"
+          },
+          "exposure_protections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuaranteePeril"
+            }
+          },
+          "payout_tiers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuaranteePayoutTier"
+            }
+          }
+        }
+      },
+      "GuaranteeDocument": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "link": {
+            "type": "string"
+          }
+        }
+      },
+      "GuaranteePeril": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "upper_threshold": {
+            "type": "number"
+          },
+          "lower_threshold": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          }
+        }
+      },
+      "GuaranteePayoutTier": {
+        "type": "object",
+        "properties": {
+          "number_of_hours": {
+            "type": "integer"
+          },
+          "payout_amount": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  }
+}
