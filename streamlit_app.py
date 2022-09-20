@@ -102,7 +102,7 @@ def parse_into_modules(raw_oas: str) -> List[ModuleWithClasses]:
         modules = []
         for module in module_files:
             module_code = module.read_text()
-
+            
             module_ast = ast.parse(module_code)
             module_class_names = [
                 x.name for x in module_ast.body if isinstance(x, ast.ClassDef)
@@ -276,3 +276,11 @@ st.download_button(
     file_name="generated_code.zip",
 )
 st.write("Download, Unzip, and run the code with `streamlit run streamlit_app.py`")
+st.warning("""\
+⚠️ Safety Note!
+
+In general do NOT run random code from the internet on your machine.
+The app generated from the example documentation is safe.
+Apps generated from other sources may not be.
+This app uses `ast.parse` to safely evaluate generated code; importing Python code will run the whole module!
+""")
