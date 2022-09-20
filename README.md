@@ -2,6 +2,8 @@
 
 Streamlit Demo App for blog post on creating clients for OpenAPI services
 
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://gerardrbentley-streamlit-form-generator-streamlit-app-r8b064.streamlitapp.com/)
+
 Built with ❤️ by [gerardrbentley](https://github.com/gerardrbentley)
 
 ## What's this?
