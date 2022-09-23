@@ -50,7 +50,7 @@ def get_raw_oas(input_method: str) -> str:
         oas_file = Path("quote-oas.json")
         raw_oas = oas_file.read_text()
     elif input_method == use_upload:
-        st.write("This will let you use your own json or yaml OAS!")
+        st.write("This will let you use your own JSON or YAML OAS!")
         oas_file = st.file_uploader(
             label="Upload an OAS",
             type=["json", "yaml", "yml"],
@@ -61,19 +61,22 @@ def get_raw_oas(input_method: str) -> str:
             st.stop()
         raw_oas = decode_uploaded_file(oas_file)
     elif input_method == use_text_input:
-        st.write("This will parse raw text input into json or yaml OAS!")
+        st.write("This will parse raw text input into JSON or YAML OAS!")
         raw_oas = st.text_area(label="Enter OAS JSON or YAML text")
         if not len(raw_oas):
             st.warning("Enter OAS text to continue!")
             st.stop()
     elif input_method == use_url:
-        st.write("This will fetch text from a url containting a json or yaml OAS!")
-        raw_oas_url = st.text_input(label="Enter url that hosts the OAS")
+        st.write("This will fetch text from the URL containing a JSON or YAML OAS!")
+        raw_oas_url = st.text_input(
+            label="Enter the URL that hosts the OAS.",
+            placeholder="https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/examples/v3.0/petstore.yaml"
+        )
         try:
             oas_url = ValidURL(url=raw_oas_url)
         except Exception as e:
             print(repr(e))
-            st.warning("Enter a valid http(s) url to continue!")
+            st.warning("Enter a valid HTTP(S) URL to continue!")
             st.stop()
         raw_oas = decode_text_from_url(oas_url.url)
     else:
@@ -102,7 +105,7 @@ def parse_into_modules(raw_oas: str) -> List[ModuleWithClasses]:
         modules = []
         for module in module_files:
             module_code = module.read_text()
-            
+
             module_ast = ast.parse(module_code)
             module_class_names = [
                 x.name for x in module_ast.body if isinstance(x, ast.ClassDef)
@@ -125,7 +128,6 @@ def generate_module_or_modules(raw_oas: str, output_directory: Path) -> List[Pat
             input_file_type=InputFileType.OpenAPI,
             output=output,
             field_constraints=False,
-
         )
         return [output]
     except Exception as e:
@@ -136,7 +138,6 @@ def generate_module_or_modules(raw_oas: str, output_directory: Path) -> List[Pat
                 input_file_type=InputFileType.OpenAPI,
                 output=output_directory,
                 field_constraints=False,
-                
             )
             return list(output_directory.iterdir())
         except Exception as e:
@@ -276,11 +277,13 @@ st.download_button(
     file_name="generated_code.zip",
 )
 st.write("Download, Unzip, and run the code with `streamlit run streamlit_app.py`")
-st.warning("""\
+st.warning(
+    """\
 ⚠️ Safety Note!
 
 In general do NOT run random code from the internet on your machine.
 The app generated from the example documentation is safe.
 Apps generated from other sources may not be.
 This app uses `ast.parse` to safely evaluate generated code; importing Python code will run the whole module!
-""")
+"""
+)
