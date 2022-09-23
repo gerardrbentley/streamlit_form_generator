@@ -70,7 +70,6 @@ def get_raw_oas(input_method: str) -> str:
         st.write("This will fetch text from the URL containing a JSON or YAML OAS!")
         raw_oas_url = st.text_input(
             label="Enter the URL that hosts the OAS.",
-            placeholder="https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/examples/v3.0/petstore.yaml"
         )
         try:
             oas_url = ValidURL(url=raw_oas_url)
@@ -147,7 +146,7 @@ def generate_module_or_modules(raw_oas: str, output_directory: Path) -> List[Pat
 
 modules = parse_into_modules(raw_oas)
 if not len(modules):
-    st.error("Could not find any models in the input!")
+    st.error("Couldn't find any models in the input!")
     st.stop()
 
 st.success(f"Generated {len(modules)} module files")
